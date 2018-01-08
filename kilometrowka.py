@@ -7,14 +7,18 @@ import calendar, json, sys, csv
 with open('config.json') as f:
 	config = json.load(f)
 
-current_year = date.today().year
 previous_month = date.today().month - 1 # minus one as we are about to run it for previous month
+if previous_month == 0:
+	previous_month = 12 # we assume that this is the new year and we want generated file for december (12)
+	current_year = date.today().year - 1 # so its december so it's already previous year
+else:
+	current_year = date.today().year # so it's not previous year so we stick with current
 
 '''
-	WHAT ABOUT HOLIDAYS? <--
+	WHAT ABOUT HOLIDAYS? <-- need to download list of holidays and when they occur, create list of that anc cross check
 '''
 
-def get_working_days(month):
+def get_working_days(month): #return number of working days in month and return table with dates
 	dates = []
 	_month = calendar.monthcalendar(current_year, month)
 	for week in _month:
@@ -44,7 +48,7 @@ def write_km(month, dates):
 		iterator = 0
 		for day in dates:
 			iterator += 1
-			writer.writerow([iterator, str(day)+'.'+str(month)+'.'+str(current_year), 'obfuscated','Dojazd do klienta', config['km'], config['1km_price'], float(config['km']) * float(config['1km_price']), '', ''])
+			writer.writerow([iterator, str(day)+'.'+str(month)+'.'+str(current_year), config['from_to'],'Dojazd do klienta', config['km'], config['1km_price'], float(config['km']) * float(config['1km_price']), '', ''])
 
 if __name__ == "__main__":
 
